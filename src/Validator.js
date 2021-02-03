@@ -2,7 +2,7 @@ exports.containsAllRequired = (reqData, required) => {
     let resault = { valid: false, error: [] }
     for (var field of required) {
         let validatingValue = reqData[field]
-        if (validatingValue === typeof undefined || validatingValue === null) {
+        if (typeof validatingValue === typeof undefined || validatingValue === null) {
             resault.error.push(`Field ${field} is required`)
         }
     }
@@ -28,11 +28,24 @@ exports.fieldTypeMatch = (reqData, map) => {
     if (reqData)
         for (var field in reqData) {
             let validatingValue = reqData[field]
-            if (!isFieldTypeMatch(map.get(field), validatingValue))
-                resault.error.push(`Field ${field} must be of type "${map.get(field)}"`)
+            let mapValue = map.get(field)
+            if (!isFieldTypeMatch(mapValue, validatingValue) && typeof mapValue !== typeof undefined)
+                resault.error.push(`Field ${field} must be of type "${mapValue}"`)
         }
     if (resault.error.length === 0)
         resault.valid = true
+    return resault
+}
+
+exports.validateDataToWrite = (data) => {
+    let resault = { valid: false, error: [] };
+    if (data) {
+        for (var field in data) {
+            if (typeof (data[field]) === typeof undefined)
+                resault.error.push(`Cannot write data: field: ${field} is undefined`)
+        }
+        resault.valid = true
+    }
     return resault
 }
 

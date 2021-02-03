@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const CourierUtils = require('../src/User/Courier/CourierUtils')
-const UserUtils = require('../src/User/UserUtils')
-const validator = require('../src/User/Courier/CourierValidator')
+const CourierUtils = require('../src/Users/Courier/CourierUtils')
+const UserUtils = require('../src/Users/User/UserUtils')
+const validator = require('../src/Users/Courier/CourierValidator')
 
 const middleware = [validator.validate]
 
@@ -41,8 +41,7 @@ router.route('/register')
     try {
       let newCourier = await CourierUtils.register(req.body)
       // let token = await CourierUtils.getToken()
-      resault = newCourier
-      res.send(resault)
+      res.send(newCourier)
       res.end()
     } catch (error) {
       next(error)
@@ -58,7 +57,7 @@ router.route('/:Id')
   .get(async (req, res, next) => {
     try {
       let courier = CourierUtils.getCourier(req.params.id)
-      res.send(success)
+      res.send(courier)
       res.end()
     } catch (error) {
       next(error)

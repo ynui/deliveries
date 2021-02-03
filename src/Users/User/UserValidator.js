@@ -1,12 +1,7 @@
-const Validator = require('../Validator')
-const Utils = require('../Utils')
+const Validator = require('../../Validator')
+const Utils = require('../../Utils')
 
-// const paramsTypeMap = new Map()
-// paramsTypeMap.set('email', 'email')
-// paramsTypeMap.set('password', 'password')
-// paramsTypeMap.set('phone', 'phone')
-// paramsTypeMap.set('name', 'string')
-// paramsTypeMap.set('address', 'string')
+const paramsTypeMap = new Map()
 
 exports.validate = (req, res, next) => {
     let method = req.customData.method

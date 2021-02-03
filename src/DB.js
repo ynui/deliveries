@@ -1,12 +1,13 @@
 const { firebase, admin } = require('../firebase/fbConfig');
 const Utils = require('./Utils')
+const validator = require('./Validator')
 
 const db = admin.firestore()
 
 async function writeToCollection(collection, document, data) {
     let success = false
     try {
-        Utils.validateDataToWrite(data)
+        validator.validateDataToWrite(data)
         await db.collection(collection).doc(document).set(data)
         success = true
     } catch (error) {

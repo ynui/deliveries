@@ -1,5 +1,5 @@
-const { firebase, admin } = require('../../firebase/fbConfig');
-const DB = require('../DB')
+const { firebase, admin } = require('../../../firebase/fbConfig');
+const DB = require('../../DB')
 
 const COLLECTION_COURIER_DETAILS = 'courierDetails'
 const COLLECTION_RESTAURANT_DETAILS = 'restaurantDetails'

@@ -24,18 +24,6 @@ function convertJsonIntToString(data) {
     return data
 }
 
-exports.validateDataToWrite = (data) => {
-    let resault = { valid: false, error: [] };
-    if (data) {
-        for (var field in data) {
-            if (typeof (data[field]) === typeof undefined)
-                resault.error.push(`Cannot write data: field: ${field} is undefined`)
-        }
-        resault.valid = true
-    }
-    return resault
-}
-
 exports.removeTrailingSlash = (str) => {
     return str.replace(/\/+$/, '');
 }

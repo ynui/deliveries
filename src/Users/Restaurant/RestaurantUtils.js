@@ -1,9 +1,9 @@
 const { firebase, admin } = require('../../../firebase/fbConfig');
-const Courier = require('./Courier')
+const Restaurant = require('./Restaurant')
 const DB = require('../../DB')
-const UserUtils = require('../UserUtils')
+const UserUtils = require('../User/UserUtils')
 
-const COLLECTION_COURIER_DETAILS = 'courierDetails'
+const COLLECTION_RESTAURANT_DETAILS = 'restaurantDetails'
 
 
 exports.register = async (data) => {
@@ -14,9 +14,9 @@ exports.register = async (data) => {
             .auth()
             .createUserWithEmailAndPassword(data.email, data.password)
             .then(async (registered) => {
+                data.id = registered.user.uid
                 firebaseUser = registered.user
-                data.id = firebaseUser.user.uid
-                newUser = new Courier(data)
+                newUser = new Restaurant(data)
             })
             .then(async () => {
                 await UserUtils.saveUserToDB(newUser)
@@ -35,22 +35,22 @@ exports.register = async (data) => {
     return newUser
 }
 
-exports.getCouriers = async () => {
-    let couriers = []
+exports.getRestaurants = async () => {
+    let restaurants = []
     try {
-        couriers = await DB.getCollection(COLLECTION_COURIER_DETAILS)
+        restaurants = await DB.getCollection(COLLECTION_RESTAURANT_DETAILS)
     } catch (error) {
         throw error
     }
-    return couriers
+    return restaurants
 }
 
-exports.getCourier = async (id) => {
-    let courier = null
+exports.getRestaurant = async (id) => {
+    let restaurant = null
     try {
-        courier = await DB.getDocument(COLLECTION_COURIER_DETAILS, id)
+        restaurant = await DB.getDocument(COLLECTION_RESTAURANT_DETAILS, id)
     } catch (error) {
         throw error
     }
-    return courier
+    return restaurants
 }
