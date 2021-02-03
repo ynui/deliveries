@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const CourierUtils = require('../src/User/Courier/CourierUtils')
+const RestauranteUtils = require('../src/User/Restaurante/RestauranteUtils')
 const UserUtils = require('../src/User/UserUtils')
-const validator = require('../src/User/Courier/CourierValidator')
+const validator = require('../src/User/Restaurante/RestauranteValidator')
 
 const middleware = [validator.validate]
 
@@ -18,13 +18,13 @@ router.use((req, res, next) => {
 router.route('/')
   .all((req, res, next) => {
     if (req.method === 'GET')
-      req.customData.method = 'getCouriers';
+      req.customData.method = 'getRestaurantes';
     next()
   })
   .get(middleware, async (req, res, next) => {
     try {
-      let allCouriers = await CourierUtils.getCouriers()
-      res.send(allCouriers)
+      let allRestaurantes = await RestauranteUtils.getRestaurantes()
+      res.send(allRestaurantes)
       res.end()
     } catch (error) {
       next(error)
@@ -39,9 +39,9 @@ router.route('/register')
   })
   .post(middleware, async (req, res, next) => {
     try {
-      let newCourier = await CourierUtils.register(req.body)
-      // let token = await CourierUtils.getToken()
-      resault = newCourier
+      let newRestaurante = await RestauranteUtils.register(req.body)
+      // let token = await RestauranteUtils.getToken()
+      resault = newRestaurante
       res.send(resault)
       res.end()
     } catch (error) {
@@ -57,7 +57,7 @@ router.route('/:Id')
   })
   .get(async (req, res, next) => {
     try {
-      let courier = CourierUtils.getCourier(req.params.id)
+      let restaurante = RestauranteUtils.getRestaurante(req.params.id)
       res.send(success)
       res.end()
     } catch (error) {
@@ -66,7 +66,7 @@ router.route('/:Id')
   })
   .delete(async (req, res, next) => {
     try {
-      let success = await UserUtils.deleteUser(req.params.Id, 'courier')
+      let success = await UserUtils.deleteUser(req.params.Id, 'restaurante')
       res.send(success)
       res.end()
     } catch (error) {
