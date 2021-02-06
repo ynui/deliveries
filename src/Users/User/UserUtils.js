@@ -66,3 +66,65 @@ exports.getAllUsers = async () => {
         }).catch((error) => { throw error });
     return users
 }
+
+exports.login = async (email, password, type = null) => {
+    let token = null;
+    let user = null;
+    try {
+        await firebase
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .then(async (registeredUser) => {
+                await registeredUser.user.getIdToken(true)
+                    .then(async (idToken) => {
+                        token = idToken
+                        user = await this.getUser(registeredUser.user.uid, type)
+                    }).catch((error) => {
+                        throw error
+                    });
+            }).catch((error) => {
+                throw error
+            });
+    } catch (error) {
+        throw error
+    }
+    return {
+        user: user,
+        token: token
+    }
+}
+
+exports.logout = async () => {
+    let success = false
+    try {
+        await firebase
+            .auth()
+            .signOut()
+            .then(() => {
+                success = true
+            }).catch((error) => {
+                throw error
+            });
+    } catch (error) {
+        throw error
+    }
+    return success
+}
+
+exports.getUser = async (id, type = null) => {
+    let user = null
+    try {
+        if (type == 'courier')
+            user = await DB.getDocument(COLLECTION_COURIER_DETAILS, id)
+        else if (type == 'restaurant')
+            user = await DB.getDocument(COLLECTION_RESTAURANT_DETAILS, id)
+        else {  //try getting courier, then try get restaurant
+            user = await DB.getDocument(COLLECTION_COURIER_DETAILS, id)
+            if (!user)
+                user = await DB.getDocument(COLLECTION_RESTAURANT_DETAILS, id)
+        }
+    } catch (error) {
+        throw error
+    }
+    return user
+} 

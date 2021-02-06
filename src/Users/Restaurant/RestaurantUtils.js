@@ -35,7 +35,27 @@ exports.register = async (data) => {
     return newUser
 }
 
-exports.getRestaurants = async () => {
+exports.login = async (email, password) => {
+    let resault = null
+    try {
+        resault = await UserUtils.login(email, password, 'restaurant')
+    } catch (error) {
+        throw error
+    }
+    return resault
+}
+
+exports.logout = async () => {
+    let resault = null
+    try {
+        resault = await UserUtils.logout()
+    } catch (error) {
+        throw error
+    }
+    return resault
+}
+
+exports.getAllRestaurants = async () => {
     let restaurants = []
     try {
         restaurants = await DB.getCollection(COLLECTION_RESTAURANT_DETAILS)
@@ -52,5 +72,21 @@ exports.getRestaurant = async (id) => {
     } catch (error) {
         throw error
     }
-    return restaurants
+    return restaurant
+}
+
+exports.updateProfile = async (id, data) => {
+    let restaurant = null;
+    try {
+        await DB.updateDocument(COLLECTION_RESTAURANT_DETAILS, id, data)
+            .then(async (resault) => {
+                if (resault)
+                    restaurant = await this.getRestaurant(id)
+            }).catch((error) => {
+                throw error
+            })
+    } catch (error) {
+        throw error
+    }
+    return restaurant
 }

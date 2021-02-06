@@ -1,14 +1,15 @@
 const Validator = require('../../Validator')
 const Utils = require('../../Utils')
 
-const paramsTypeMap = new Map()
-paramsTypeMap.set('email', 'email')
-paramsTypeMap.set('password', 'password')
-paramsTypeMap.set('phone', 'phone')
-paramsTypeMap.set('firstName', 'string')
-paramsTypeMap.set('lastName', 'string')
-paramsTypeMap.set('gender', 'string')
-paramsTypeMap.set('dateOfBirth', 'date')
+const paramsTypeMap = new Map([
+    ['email', 'email'],
+    ['password', 'password'],
+    ['phone', 'phone'],
+    ['firstName', 'string'],
+    ['lastName', 'string'],
+    ['gender', 'string'],
+    ['dateOfBirth', 'date']
+])
 
 exports.validate = (req, res, next) => {
     let method = req.customData.method
@@ -20,22 +21,27 @@ exports.validate = (req, res, next) => {
                 required = ['email', 'password', 'phone', 'firstName', 'lastName']
                 optional = ['gender', 'dateOfBirth']
                 break;
-            case 'getCouriers':
-            case 'getCourier':
+            case 'login':
+                required = ['email', 'password']
+                break;
+            case 'update':
+                optional = ['phone', 'firstName', 'lastName', 'gender', 'dateOfBirth']
+                break;
+            case 'get':
+            case 'getAll':
+            case 'delete':
+            case 'logout':
                 break;
         }
         let containsAllRequired = Validator.containsAllRequired(req.body, required)
         let containsOnlyNecessary = Validator.containsOnlyNecessary(req.body, required.concat(optional))
         let fieldTypeMatch = Validator.fieldTypeMatch(req.body, paramsTypeMap)
         if (!containsAllRequired.valid || !fieldTypeMatch.valid || !containsOnlyNecessary.valid) {
-            let errMsg = containsAllRequired.error.concat(containsOnlyNecessary.error).concat(fieldTypeMatch.error)
+            let errMsg = Validator.createErrorMsg(containsAllRequired.error, containsOnlyNecessary.error, fieldTypeMatch.error)
             next(Utils.createError(errMsg, 'input-not-valid'))
         }
         else
             next()
     }
+    next(Utils.createError('No req.method provided', 'no-validation-method'))
 }
-
-// module.exports = {
-//     courierValidation
-// }

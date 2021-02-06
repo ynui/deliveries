@@ -1,7 +1,10 @@
 const Validator = require('../../Validator')
 const Utils = require('../../Utils')
 
-const paramsTypeMap = new Map()
+const paramsTypeMap = new Map([
+    ['email', 'email'],
+    ['password', 'password']
+])
 
 exports.validate = (req, res, next) => {
     let method = req.customData.method
@@ -9,6 +12,10 @@ exports.validate = (req, res, next) => {
         let required = []
         let optional = []
         switch (method) {
+            case 'login':
+                required = ['email', 'password']
+                break;
+            case 'logout':
             case 'getUsers':
                 break;
         }
@@ -16,10 +23,11 @@ exports.validate = (req, res, next) => {
         let containsOnlyNecessary = Validator.containsOnlyNecessary(req.body, required.concat(optional))
         let fieldTypeMatch = Validator.fieldTypeMatch(req.body, paramsTypeMap)
         if (!containsAllRequired.valid || !fieldTypeMatch.valid || !containsOnlyNecessary.valid) {
-            let errMsg = containsAllRequired.error.concat(containsOnlyNecessary.error).concat(fieldTypeMatch.error)
+            let errMsg = Validator.createErrorMsg(containsAllRequired.error, containsOnlyNecessary.error, fieldTypeMatch.error)
             next(Utils.createError(errMsg, 'input-not-valid'))
         }
         else
             next()
     }
+    next(Utils.createError('No req.method provided', 'no-validation-method'))
 }

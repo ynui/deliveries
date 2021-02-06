@@ -3,7 +3,7 @@ exports.containsAllRequired = (reqData, required) => {
     for (var field of required) {
         let validatingValue = reqData[field]
         if (typeof validatingValue === typeof undefined || validatingValue === null) {
-            resault.error.push(`Field ${field} is required`)
+            resault.error.push(`Required field missing: ${field}`)
         }
     }
     if (resault.error.length === 0)
@@ -15,7 +15,7 @@ exports.containsOnlyNecessary = (reqData, fields) => {
     let resault = { valid: false, error: [] }
     for (var field in reqData) {
         if (!fields.includes(field)) {
-            resault.error.push(`Field ${field} is unnecessary`)
+            resault.error.push(`Unrelated field found: ${field}`)
         }
     }
     if (resault.error.length === 0)
@@ -30,7 +30,7 @@ exports.fieldTypeMatch = (reqData, map) => {
             let validatingValue = reqData[field]
             let mapValue = map.get(field)
             if (!isFieldTypeMatch(mapValue, validatingValue) && typeof mapValue !== typeof undefined)
-                resault.error.push(`Field ${field} must be of type "${mapValue}"`)
+                resault.error.push(`Field type mismatch: ${field} must be of type: ${mapValue}, received: ${validatingValue}`)
         }
     if (resault.error.length === 0)
         resault.valid = true
@@ -47,6 +47,16 @@ exports.validateDataToWrite = (data) => {
         resault.valid = true
     }
     return resault
+}
+
+exports.createErrorMsg = (...errors) => {
+    let resault = []
+    for (var err of errors) {
+        if (err.length > 0) {
+            resault = resault.concat(err)
+        }
+    }
+    return resault.join(', ')
 }
 
 function isFieldTypeMatch(type, value, resault) {

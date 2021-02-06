@@ -37,8 +37,24 @@ router.route('/login')
   })
   .get(middleware, async (req, res, next) => {
     try {
-      let users = await UserUtils.login(req.body.email, req.body.password)
-      res.send(users)
+      let resault = await UserUtils.login(req.body.email, req.body.password)
+      res.send(resault)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  });
+
+router.route('/logout')
+  .all((req, res, next) => {
+    if (req.method === 'GET')
+      req.customData.method = 'logout';
+    next()
+  })
+  .get(middleware, async (req, res, next) => {
+    try {
+      let success = await UserUtils.logout()
+      res.send(success)
       res.end()
     } catch (error) {
       next(error)

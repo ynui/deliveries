@@ -8,6 +8,8 @@ async function writeToCollection(collection, document, data) {
     let success = false
     try {
         validator.validateDataToWrite(data)
+        if (validate.error.length !== 0)
+            throw Utils.createError(validate.error, 'invalid-data-write')
         await db.collection(collection).doc(document).set(data)
         success = true
     } catch (error) {
@@ -17,14 +19,13 @@ async function writeToCollection(collection, document, data) {
     return success
 }
 
-async function updateDocument(collection, document, data, docRef = null) {
+async function updateDocument(collection, document, data) {
     let success = false
     try {
-        Utils.validateDataWrite(data)
-        if (!(docRef === null))
-            await docRef.update(data)
-        else
-            await db.collection(collection).doc(document).update(data)
+        let validate = validator.validateDataToWrite(data)
+        if (validate.error.length !== 0)
+            throw Utils.createError(validate.error, 'invalid-data-write')
+        await db.collection(collection).doc(document).update(data)
         success = true
     } catch (error) {
         console.error('Error updating ' + collection + document + data)
