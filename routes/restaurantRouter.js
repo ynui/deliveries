@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+const { setReqMethod } = require('./RouterUtils')
 const RestaurantUtils = require('../src/Users/Restaurant/RestaurantUtils')
 const UserUtils = require('../src/Users/User/UserUtils')
 const validator = require('../src/Users/Restaurant/RestaurantValidator')
-const { setReqMethod } = require('./RouterUtils')
+const geo = require('../src/Geocoding/geocode')
 
 const middleware = [validator.validate]
 
@@ -18,9 +19,9 @@ router.use((req, res, next) => {
 
 router.route('/')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['GET', 'getAll']
-    ]))
+    setReqMethod(req, {
+      get: 'getAll'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -35,9 +36,9 @@ router.route('/')
 
 router.route('/login')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['POST', 'login']
-    ]))
+    setReqMethod(req, {
+      post: 'login'
+    })
     next()
   })
   .post(middleware, async (req, res, next) => {
@@ -52,9 +53,9 @@ router.route('/login')
 
 router.route('/logout')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['GET', 'logout']
-    ]))
+    setReqMethod(req, {
+      get: 'logout'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -69,9 +70,9 @@ router.route('/logout')
 
 router.route('/register')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['POST', 'register']
-    ]))
+    setReqMethod(req, {
+      post: 'register'
+    })
     next()
   })
   .post(middleware, async (req, res, next) => {
@@ -87,14 +88,14 @@ router.route('/register')
 
 router.route('/:id')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['GET', 'get'],
-      ['PUT', 'update'],
-      ['DELETE', 'delete'],
-    ]))
+    setReqMethod(req, {
+      get: 'get',
+      put: 'update',
+      delete: 'delete',
+    })
     next()
   })
-  .get(async (req, res, next) => {
+  .get(middleware, async (req, res, next) => {
     try {
       let restaurant = await RestaurantUtils.getRestaurant(req.params.id)
       res.send(restaurant)
@@ -112,10 +113,28 @@ router.route('/:id')
       next(error)
     }
   })
-  .delete(async (req, res, next) => {
+  .delete(middleware, async (req, res, next) => {
     try {
-      let success = await UserUtils.deleteUser(req.params.Id, 'restaurant')
+      let success = await UserUtils.deleteUser(req.params.id, 'restaurant')
       res.send(success)
+      res.end()
+    } catch (error) {
+      next(error)
+    }
+  })
+
+router.route('/:id/deliver')
+  .all((req, res, next) => {
+    setReqMethod(req, {
+      post: 'deliver'
+    })
+    next()
+  })
+  .post(middleware, async (req, res, next) => {
+    try {
+      let resault = await RestaurantUtils.deliver(req.params.id, req.body.deliverAddress)
+      // let resault = await geo.geoCode(req.body.query)
+      res.send(resault)
       res.end()
     } catch (error) {
       next(error)

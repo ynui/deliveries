@@ -3,6 +3,7 @@ const router = express.Router();
 
 const UserUtils = require('../src/Users/User/UserUtils')
 const validator = require('../src/Users/User/UserValidator')
+const { setReqMethod } = require('./RouterUtils')
 
 const middleware = [validator.validate]
 
@@ -15,8 +16,9 @@ router.use((req, res, next) => {
 
 router.route('/')
   .all((req, res, next) => {
-    if (req.method === 'GET')
-      req.customData.method = 'getUsers';
+    setReqMethod(req, {
+      get: 'getAll'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -31,11 +33,12 @@ router.route('/')
 
 router.route('/login')
   .all((req, res, next) => {
-    if (req.method === 'GET')
-      req.customData.method = 'login';
+    setReqMethod(req, {
+      post: 'login'
+    })
     next()
   })
-  .get(middleware, async (req, res, next) => {
+  .post(middleware, async (req, res, next) => {
     try {
       let resault = await UserUtils.login(req.body.email, req.body.password)
       res.send(resault)
@@ -47,8 +50,9 @@ router.route('/login')
 
 router.route('/logout')
   .all((req, res, next) => {
-    if (req.method === 'GET')
-      req.customData.method = 'logout';
+    setReqMethod(req, {
+      get: 'logout'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {

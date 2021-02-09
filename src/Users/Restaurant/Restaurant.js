@@ -6,6 +6,7 @@ class Restaurant {
         this.email = data.email
         this.name = data.name
         this.address = data.address
+        this.latlng = data.latlng
         this.description = data.description || null
     }
 

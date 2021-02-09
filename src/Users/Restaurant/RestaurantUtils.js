@@ -2,6 +2,8 @@ const { firebase, admin } = require('../../../firebase/fbConfig');
 const Restaurant = require('./Restaurant')
 const DB = require('../../DB')
 const UserUtils = require('../User/UserUtils')
+const Utils = require('../../Utils')
+const Geo = require('../../Geocoding/geocode')
 
 const COLLECTION_RESTAURANT_DETAILS = 'restaurantDetails'
 
@@ -15,6 +17,9 @@ exports.register = async (data) => {
             .createUserWithEmailAndPassword(data.email, data.password)
             .then(async (registered) => {
                 data.id = registered.user.uid
+                let addressGeo = await Geo.geoCode(data.address)
+                data['address'] = addressGeo.formatted
+                data.latlng = addressGeo.geometry
                 firebaseUser = registered.user
                 newUser = new Restaurant(data)
             })
@@ -28,7 +33,7 @@ exports.register = async (data) => {
                 throw error
             })
     } catch (error) {
-        if (newUser)
+        if (firebaseUser)
             await UserUtils.deleteUser(newUser.id)
         throw error
     }
@@ -89,4 +94,22 @@ exports.updateProfile = async (id, data) => {
         throw error
     }
     return restaurant
+}
+
+exports.deliver = async (restaurantId, deliverAddress) => {
+    let resault = null;
+    let restaurant = null;
+    try {
+        restaurant = await this.getRestaurant(restaurantId)
+        let deliverGeo = await Geo.geoCode(deliverAddress)
+        let dist = await Geo.distance(restaurant.latlng)
+        resault = {
+            restaurant: restaurant,
+            distance: dist,
+            recommendedPrice: Utils.getRecomendedPrice(dist)
+        }
+    } catch (error) {
+        throw error
+    }
+    return resault
 }

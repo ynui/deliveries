@@ -45,10 +45,20 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send({
-    code: err.code,
-    message: err.message
-  })
+
+  try {
+    let jsonMsg = JSON.parse(err.message)
+    res.send({
+      code: err.code,
+      message: jsonMsg
+    })
+  } catch (error) {
+    console.log(error)
+    res.send({
+      code: err.code,
+      message: err.message
+    })
+  }
   res.end()
 });
 

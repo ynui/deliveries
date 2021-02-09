@@ -15,7 +15,7 @@ exports.deleteUser = async (userId, type) => {
                 console.log(`Successfully deleted user ${userId}`);
             })
             .catch((error) => {
-                console.log(`Error deleting user ${userId} Error: ${error}`);
+                console.log(`Error deleting user ${userId}, ${error}`);
             });
         if (type === 'courier')
             await DB.deleteDocument(COLLECTION_COURIER_DETAILS, userId)
@@ -127,4 +127,4 @@ exports.getUser = async (id, type = null) => {
         throw error
     }
     return user
-} 
+}

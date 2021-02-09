@@ -14,14 +14,21 @@ exports.generateHashId = (input) => {
     return crypto.createHash(ENCRYPTION).update(JSON.stringify(input)).digest('hex')
 }
 
-function convertJsonIntToString(data) {
-    for (var field in data) {
-        if (typeof data[field] === 'number')
-            data[field] = data[field].toString()
-        if (typeof data[field] === 'object')
-            data[field] = convertJsonIntToString(data[field])
-    }
-    return data
+exports.getRecomendedPrice = (dist) => {
+    let price = 0
+    if (dist <= 1)
+        price = 20
+    else if (dist <= 1.5)
+        price = 22
+    else if (dist <= 2)
+        price = 25
+    else if (dist <= 2.5)
+        price = 27
+    else if (dist <= 3)
+        price = 30
+    else
+        price = 45
+    return price
 }
 
 exports.removeTrailingSlash = (str) => {

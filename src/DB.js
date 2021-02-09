@@ -7,8 +7,8 @@ const db = admin.firestore()
 async function writeToCollection(collection, document, data) {
     let success = false
     try {
-        validator.validateDataToWrite(data)
-        if (validate.error.length !== 0)
+        let validate = validator.validateDataToWrite(data)
+        if (validate.error.length > 0)
             throw Utils.createError(validate.error, 'invalid-data-write')
         await db.collection(collection).doc(document).set(data)
         success = true

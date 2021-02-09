@@ -18,9 +18,9 @@ router.use((req, res, next) => {
 
 router.route('/')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['GET', 'getAll']
-    ]))
+    setReqMethod(req, {
+      get: 'getAll'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -35,9 +35,9 @@ router.route('/')
 
 router.route('/login')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['POST', 'login']
-    ]))
+    setReqMethod(req, {
+      post: 'login'
+    })
     next()
   })
   .post(middleware, async (req, res, next) => {
@@ -52,9 +52,9 @@ router.route('/login')
 
 router.route('/logout')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['GET', 'logout']
-    ]))
+    setReqMethod(req, {
+      get: 'logout'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {
@@ -69,9 +69,9 @@ router.route('/logout')
 
 router.route('/register')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['POST', 'register']
-    ]))
+    setReqMethod(req, {
+      post: 'register'
+    })
     next()
   })
   .post(middleware, async (req, res, next) => {
@@ -87,11 +87,11 @@ router.route('/register')
 
 router.route('/:id')
   .all((req, res, next) => {
-    setReqMethod(req, new Map([
-      ['GET', 'get'],
-      ['PUT', 'update'],
-      ['DELETE', 'delete'],
-    ]))
+    setReqMethod(req, {
+      get: 'get',
+      put: 'update',
+      delete: 'delete'
+    })
     next()
   })
   .get(middleware, async (req, res, next) => {
