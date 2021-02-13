@@ -40,8 +40,8 @@ router.route('/login')
   })
   .post(middleware, async (req, res, next) => {
     try {
-      let resault = await UserUtils.login(req.body.email, req.body.password)
-      res.send(resault)
+      let result = await UserUtils.login(req.body.email, req.body.password)
+      res.send(result)
       res.end()
     } catch (error) {
       next(error)

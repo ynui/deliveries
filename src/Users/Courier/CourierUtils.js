@@ -36,23 +36,23 @@ exports.register = async (data) => {
 }
 
 exports.login = async (email, password) => {
-    let resault = null
+    let result = null
     try {
-        resault = await UserUtils.login(email, password, 'courier')
+        result = await UserUtils.login(email, password, 'courier')
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }
 
 exports.logout = async () => {
-    let resault = null
+    let result = null
     try {
-        resault = await UserUtils.logout()
+        result = await UserUtils.logout()
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }
 
 
@@ -80,8 +80,8 @@ exports.updateProfile = async (id, data) => {
     let courier = null;
     try {
         await DB.updateDocument(COLLECTION_COURIER_DETAILS, id, data)
-            .then(async (resault) => {
-                if (resault)
+            .then(async (result) => {
+                if (result)
                     courier = await this.getCourier(id)
             }).catch((error) => {
                 throw error

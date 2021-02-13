@@ -5,8 +5,10 @@ class Restaurant {
         this.phone = data.phone
         this.email = data.email
         this.name = data.name
-        this.address = data.address
-        this.latlng = data.latlng
+        this.address = {
+            name: data.address,
+            geometry: data.geometry || null
+        }
         this.description = data.description || null
     }
 

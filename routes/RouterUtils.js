@@ -1,20 +1,20 @@
 exports.setReqMethod = (req, map) => {
-    let resault = null
+    let result = null
     let method = req.method
     switch (method) {
         case 'GET':
-            resault = map.get
+            result = map.get
             break;
         case 'POST':
-            resault = map.post
+            result = map.post
             break;
         case 'PUT':
-            resault = map.put
+            result = map.put
             break;
         case 'DELETE':
-            resault = map.delete
+            result = map.delete
             break;
     }
-    req.customData.method = resault;
-    return resault
+    req.customData.method = result;
+    return result
 }

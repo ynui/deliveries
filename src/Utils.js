@@ -15,19 +15,24 @@ exports.generateHashId = (input) => {
 }
 
 exports.getRecomendedPrice = (dist) => {
-    let price = 0
-    if (dist <= 1)
-        price = 20
-    else if (dist <= 1.5)
-        price = 22
-    else if (dist <= 2)
-        price = 25
-    else if (dist <= 2.5)
-        price = 27
-    else if (dist <= 3)
-        price = 30
-    else
-        price = 45
+    let price = 20
+    let seperatedDist = dist.toString().split('.')
+    let full = seperatedDist[0]
+    let part = seperatedDist[1]
+    if (dist > 1) {
+        if (full > 1)
+            price += 5 * (full - 1)
+        if (part[0] < 2)
+            price += 1
+        else if (part[0] < 4)
+            price += 2
+        else if (part[0] < 6)
+            price += 3
+        else if (part[0] < 8)
+            price += 4
+        else
+            price += 5
+    }
     return price
 }
 

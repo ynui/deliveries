@@ -43,8 +43,8 @@ router.route('/login')
   })
   .post(middleware, async (req, res, next) => {
     try {
-      let resault = await RestaurantUtils.login(req.body.email, req.body.password)
-      res.send(resault)
+      let result = await RestaurantUtils.login(req.body.email, req.body.password)
+      res.send(result)
       res.end()
     } catch (error) {
       next(error)
@@ -60,8 +60,8 @@ router.route('/logout')
   })
   .get(middleware, async (req, res, next) => {
     try {
-      let resault = await RestaurantUtils.logout()
-      res.send(resault)
+      let result = await RestaurantUtils.logout()
+      res.send(result)
       res.end()
     } catch (error) {
       next(error)
@@ -123,18 +123,18 @@ router.route('/:id')
     }
   })
 
-router.route('/:id/deliver')
+router.route('/:id/getQuote')
   .all((req, res, next) => {
     setReqMethod(req, {
-      post: 'deliver'
+      post: 'getQuote'
     })
     next()
   })
   .post(middleware, async (req, res, next) => {
     try {
-      let resault = await RestaurantUtils.deliver(req.params.id, req.body.deliverAddress)
-      // let resault = await geo.geoCode(req.body.query)
-      res.send(resault)
+      let result = await RestaurantUtils.getQuote(req.params.id, req.body)
+      // let result = await geo.geoCode(req.body.query)
+      res.send(result)
       res.end()
     } catch (error) {
       next(error)

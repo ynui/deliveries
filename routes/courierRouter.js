@@ -42,8 +42,8 @@ router.route('/login')
   })
   .post(middleware, async (req, res, next) => {
     try {
-      let resault = await CourierUtils.login(req.body.email, req.body.password)
-      res.send(resault)
+      let result = await CourierUtils.login(req.body.email, req.body.password)
+      res.send(result)
       res.end()
     } catch (error) {
       next(error)
@@ -59,8 +59,8 @@ router.route('/logout')
   })
   .get(middleware, async (req, res, next) => {
     try {
-      let resault = await CourierUtils.logout()
-      res.send(resault)
+      let result = await CourierUtils.logout()
+      res.send(result)
       res.end()
     } catch (error) {
       next(error)

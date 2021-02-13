@@ -35,36 +35,36 @@ async function updateDocument(collection, document, data) {
 }
 
 async function getDocument(collection, document) {
-    let resault = null
+    let result = null
     let docRef = db.collection(collection).doc(document)
     let doc = await docRef.get()
-    if (doc.exists) resault = doc.data()
-    return resault
+    if (doc.exists) result = doc.data()
+    return result
 }
 
 
 async function getCollection(collection) {
-    let resault = null
+    let result = null
     try {
         let colRef = db.collection(collection)
         let col = await colRef.get()
-        resault = col.docs.map(doc => doc.data())
+        result = col.docs.map(doc => doc.data())
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }
 
 async function deleteDocument(collection, document) {
-    let resault = false
+    let result = false
     try {
         let docRef = db.collection(collection).doc(document)
         await docRef.delete()
-        resault = true
+        result = true
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }
 
 async function isDocAlreadyExists(collection, document) {

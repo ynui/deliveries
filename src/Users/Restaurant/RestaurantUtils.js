@@ -17,9 +17,6 @@ exports.register = async (data) => {
             .createUserWithEmailAndPassword(data.email, data.password)
             .then(async (registered) => {
                 data.id = registered.user.uid
-                let addressGeo = await Geo.geoCode(data.address)
-                data['address'] = addressGeo.formatted
-                data.latlng = addressGeo.geometry
                 firebaseUser = registered.user
                 newUser = new Restaurant(data)
             })
@@ -41,23 +38,23 @@ exports.register = async (data) => {
 }
 
 exports.login = async (email, password) => {
-    let resault = null
+    let result = null
     try {
-        resault = await UserUtils.login(email, password, 'restaurant')
+        result = await UserUtils.login(email, password, 'restaurant')
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }
 
 exports.logout = async () => {
-    let resault = null
+    let result = null
     try {
-        resault = await UserUtils.logout()
+        result = await UserUtils.logout()
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }
 
 exports.getAllRestaurants = async () => {
@@ -84,8 +81,8 @@ exports.updateProfile = async (id, data) => {
     let restaurant = null;
     try {
         await DB.updateDocument(COLLECTION_RESTAURANT_DETAILS, id, data)
-            .then(async (resault) => {
-                if (resault)
+            .then(async (result) => {
+                if (result)
                     restaurant = await this.getRestaurant(id)
             }).catch((error) => {
                 throw error
@@ -96,20 +93,20 @@ exports.updateProfile = async (id, data) => {
     return restaurant
 }
 
-exports.deliver = async (restaurantId, deliverAddress) => {
-    let resault = null;
+exports.getQuote = async (restaurantId, data) => {
+    let result = null;
     let restaurant = null;
     try {
         restaurant = await this.getRestaurant(restaurantId)
-        let deliverGeo = await Geo.geoCode(deliverAddress)
-        let dist = await Geo.distance(restaurant.latlng)
-        resault = {
-            restaurant: restaurant,
-            distance: dist,
-            recommendedPrice: Utils.getRecomendedPrice(dist)
+        let distance = await Geo.distance(restaurant.address.geometry, { longitude: data.longitude, latitude: data.latitude })
+        result = {
+            restaurant,
+            distance,
+            address: data.address || null,
+            recommendedPrice: Utils.getRecomendedPrice(distance)
         }
     } catch (error) {
         throw error
     }
-    return resault
+    return result
 }

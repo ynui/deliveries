@@ -28,8 +28,9 @@ exports.validate = (req, res, next) => {
         case 'update':
             optional = ['phone', 'name', 'address', 'description']
             break;
-        case 'deliver':
-            required = ['deliverAddress']
+        case 'getQuote':
+            required = ['longitude', 'latitude']
+            optional = ['address']
             break;
         case 'get':
         case 'getAll':
