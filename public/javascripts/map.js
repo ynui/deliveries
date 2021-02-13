@@ -6,14 +6,22 @@ require([
     "esri/Graphic",
     "esri/layers/GraphicsLayer",
     "esri/tasks/Locator",
-    "esri/symbols/WebStyleSymbol"
+    "esri/symbols/WebStyleSymbol",
+    "esri/widgets/BasemapGallery",
+    "esri/Basemap",
+    "esri/widgets/Expand",
+    "esri/widgets/Directions"
 ],
-    function (esriConfig, Map, SceneView, Search, Graphic, GraphicsLayer, Locator, WebStyleSymbol) {
+    function (
+        esriConfig, Map, SceneView, Search, Graphic,
+        GraphicsLayer, Locator, WebStyleSymbol, BasemapGallery,
+        Basemap, Expand, Directions) {
+
         esriConfig.apiKey = "AAPKcfbf001c53a54450b63fcd2a18338a1dntqM2Y3-DsD1T4IvkTzxbTiD0jDQE18n4eP9C9QO65uFFCjWEEDJYoQm9WSlp2NK";
 
         let map = new Map({
-            // basemap: "streets"
-            basemap: "arcgis-navigation"
+            basemap: "streets"
+            // basemap: "arcgis-navigation"
         });
 
         var view = new SceneView({
@@ -26,23 +34,65 @@ require([
         const graphicsLayer = new GraphicsLayer();
         map.add(graphicsLayer);
 
-        let searchWidget = new Search({
-            view: view
+        const searchWidget = new Search({
+            view: view,
+            resultGraphicEnabled: false,
+            popupEnabled: false
         });
 
         const locatorTask = new Locator({
             url: "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
         })
 
-        // Add the search widget to the top right corner of the view
-        view.ui.add(searchWidget, {
+        const basemapGallery = new BasemapGallery({
+            view: view,
+            container: document.createElement("div"),
+            source: [
+                Basemap.fromId("streets"),
+                Basemap.fromId("arcgis-navigation"),
+                Basemap.fromId("arcgis-newspaper"),
+                Basemap.fromId("arcgis-nova"),
+                Basemap.fromId("satellite")
+            ] // autocasts to LocalBasemapsSource
+        });
+
+        var directionsWidget = new Directions({
+            view: view
+        });
+
+        var bgExpand = new Expand({
+            view: view,
+            content: basemapGallery
+        });
+
+        var dirExpand = new Expand({
+            view: view,
+            content: directionsWidget
+        });
+
+        var searchExpand = new Expand({
+            view: view,
+            content: searchWidget,
+            expanded: true
+        });
+
+        view.ui.add(searchExpand, {
+            position: "top-right"
+        });
+
+        // view.ui.add(dirExpand, {
+        //     position: "top-right"
+        // });
+
+        view.ui.add(bgExpand, {
             position: "top-right"
         });
 
         searchWidget.on('search-complete', searchWidgetHandler)
-        view.on("click", mapClickHandler);
+        view.on('click', mapClickHandler);
 
         async function mapClickHandler(event) {
+            document.getElementById('deliverSummery').style.visibility = 'hidden'
             graphicsLayer.removeAll()
             let pointGraphic = createGraphic(event.mapPoint)
             graphicsLayer.add(pointGraphic);
@@ -56,8 +106,12 @@ require([
         }
 
         function searchWidgetHandler(result) {
+            document.getElementById('deliverSummery').style.visibility = 'hidden'
             let resData = result.results[0].results[0]
             let geometry = resData.feature.geometry
+            graphicsLayer.removeAll()
+            let pointGraphic = createGraphic(geometry)
+            graphicsLayer.add(pointGraphic);
             let obj = {
                 longitude: geometry.longitude,
                 latitude: geometry.latitude,
@@ -81,14 +135,6 @@ require([
                 longitude: data.longitude,
                 latitude: data.latitude
             };
-            // const symbol = {
-            //     type: "simple-marker",
-            //     color: "blue",
-            //     outline: {
-            //         color: [255, 255, 255],
-            //         width: 1
-            //     }
-            // };
             const symbol = {
                 type: "web-style",
                 name: "push-pin-2",

@@ -133,7 +133,6 @@ router.route('/:id/getQuote')
   .post(middleware, async (req, res, next) => {
     try {
       let result = await RestaurantUtils.getQuote(req.params.id, req.body)
-      // let result = await geo.geoCode(req.body.query)
       res.send(result)
       res.end()
     } catch (error) {

@@ -1,13 +1,3 @@
-// const fetch = require('node-fetch');
-
-// const key = '900dc9c1f2cd42eb9c4ca2e997315906'
-// exports.geoCode = async (query) => {
-//     let result = null
-//     let url = `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${key}`
-//     result = await fetch(url).then(res => result = res.json())
-//     return result.results[0] || null
-// }
-
 exports.distance = (point1, point2, unit = 'K') => {
     if ((point1.latitude == point2.latitude) && (point1.longitude == point2.longitude)) {
         return 0;

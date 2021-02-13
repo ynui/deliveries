@@ -14,10 +14,23 @@
     <!-- <div id="viewDiv"></div> -->
 
     <div class="sidenav">
-        <p id="latitude"></p>
-        <p id="longitude"></p>
-        <input id="address"></p>
-        <button id="submit" onclick="getQuote()">Submit</button>
+        <div id="deliverAddress">
+            <p id="latitude"></p>
+            <p id="longitude"></p>
+            <input required id="address"></p>
+            <button id="submit" onclick="getQuote()">Submit</button>
+        </div>
+        <div id="deliverSummery" style="visibility: hidden;">
+            <p>From:</p><br>
+            <p id="from"></p>
+            <p>To:</p><br>
+            <p id="to"></p>
+            <p>Distance:</p><br>
+            <p id="distance"></p>
+            <p>Recommended Price:</p><br>
+            <p id="recommendedPrice"></p>
+            <button id="submit" onclick="deliver()">Submit</button>
+        </div>
     </div>
 
     <div class="content">
